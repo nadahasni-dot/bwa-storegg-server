@@ -95,23 +95,23 @@ module.exports = {
       res.redirect(`/nominal/edit/${id}`);
     }
   },
-  //   actionDelete: async (req, res) => {
-  //     try {
-  //       const { id } = req.params;
+  actionDelete: async (req, res) => {
+    try {
+      const { id } = req.params;
 
-  //       await Category.deleteOne({ _id: id });
+      await Nominal.deleteOne({ _id: id });
 
-  //       req.flash("alertMessage", "Berhasil hapus data");
-  //       req.flash("alertStatus", "success");
+      req.flash("alertMessage", "Berhasil hapus data");
+      req.flash("alertStatus", "success");
 
-  //       res.redirect("/category");
-  //     } catch (error) {
-  //       console.log(error);
-  //       req.flash("alertMessage", `${error.message}`);
-  //       req.flash("alertStatus", `danger`);
+      res.redirect("/nominal");
+    } catch (error) {
+      console.log(error);
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", `danger`);
 
-  //       console.log(error);
-  //       res.redirect("/category");
-  //     }
-  //   },
+      console.log(error);
+      res.redirect("/nominal");
+    }
+  },
 };
