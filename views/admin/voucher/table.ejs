@@ -30,12 +30,19 @@
         >
       </td>
       <td>
-        <form action="" style="display: inline-block">
+        <form
+          action="/voucher/status/<%= vouchers[i]._id %>?_method=PUT"
+          style="display: inline-block"
+          method="POST"
+        >
           <button class="btn btn-primary btn-sm">
-            <i class="fas fa-folder"></i> Hapus
+            <i class="fas fa-folder"></i>
+            <%= vouchers[i].status === 'Y' ? 'Matikan' : 'Hidupkan' %>
           </button>
         </form>
-        <a href="/voucher/edit/<%= vouchers[i]._id %>" class="btn btn-info btn-sm"
+        <a
+          href="/voucher/edit/<%= vouchers[i]._id %>"
+          class="btn btn-info btn-sm"
           ><i class="fas fa-pencil-alt"></i> Ubah</a
         >
         <form
