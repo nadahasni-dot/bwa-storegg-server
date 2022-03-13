@@ -76,7 +76,7 @@ module.exports = {
 
             await voucher.save();
 
-            req.flash("alertMessage", "Berhasil tambah nominal");
+            req.flash("alertMessage", "Berhasil tambah voucher");
             req.flash("alertStatus", "success");
 
             res.redirect("/voucher");
@@ -98,7 +98,7 @@ module.exports = {
 
         await voucher.save();
 
-        req.flash("alertMessage", "Berhasil tambah nominal");
+        req.flash("alertMessage", "Berhasil tambah voucher");
         req.flash("alertStatus", "success");
 
         res.redirect("/voucher");
@@ -111,48 +111,105 @@ module.exports = {
       res.redirect("/voucher/create");
     }
   },
-  //   viewEdit: async (req, res) => {
-  //     try {
-  //       const { id } = req.params;
-  //       const nominal = await Nominal.findOne({ _id: id });
+  viewEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
 
-  //       const alertMessage = req.flash("alertMessage");
-  //       const alertStatus = req.flash("alertStatus");
-  //       const alert = { message: alertMessage, status: alertStatus };
+      const categories = await Category.find();
+      const nominals = await Nominal.find();
+      const voucher = await Voucher.findOne({ _id: id })
+        .populate("category")
+        .populate("nominals");
 
-  //       res.render("admin/nominal/edit", { nominal, alert });
-  //     } catch (error) {
-  //       console.log(error);
-  //       req.flash("alertMessage", `${error.message}`);
-  //       req.flash("alertStatus", `danger`);
+      const alertMessage = req.flash("alertMessage");
+      const alertStatus = req.flash("alertStatus");
+      const alert = { message: alertMessage, status: alertStatus };
 
-  //       console.log(error);
-  //       res.redirect("/nominal/edit");
-  //     }
-  //   },
-  //   actionEdit: async (req, res) => {
-  //     const { id } = req.params;
+      res.render("admin/voucher/edit", {
+        voucher,
+        categories,
+        nominals,
+        alert,
+      });
+    } catch (error) {
+      console.log(error);
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", `danger`);
 
-  //     try {
-  //       const { coinName, coinQuantity, price } = req.body;
+      console.log(error);
+      res.redirect("/voucher/edit");
+    }
+  },
+  actionEdit: async (req, res) => {
+    const { id } = req.params;
 
-  //       await Nominal.findOneAndUpdate(
-  //         { _id: id },
-  //         { coinName, coinQuantity, price }
-  //       );
+    try {
+      const { name, category, nominals } = req.body;
 
-  //       req.flash("alertMessage", "Berhasil update data");
-  //       req.flash("alertStatus", "success");
+      if (req.file) {
+        let tmp_path = req.file.path;
+        let originalExt =
+          req.file.originalname.split(".")[
+            req.file.originalname.split(".").length - 1
+          ];
+        let fileName = req.file.filename + "." + originalExt;
+        let target_path = path.resolve(
+          config.rootPath,
+          `public/uploads/${fileName}`
+        );
 
-  //       res.redirect("/nominal");
-  //     } catch (error) {
-  //       console.log(error);
-  //       req.flash("alertMessage", `${error.message}`);
-  //       req.flash("alertStatus", `danger`);
+        const src = fs.createReadStream(tmp_path);
+        const dest = fs.createWriteStream(target_path);
 
-  //       res.redirect(`/nominal/edit/${id}`);
-  //     }
-  //   },
+        src.pipe(dest);
+        src.on("end", async () => {
+          try {
+            const voucher = await Voucher.findOne({ _id: id });
+            let currentImage = `${config.rootPath}/public/uploads/${voucher.thumbnail}`;
+            if (fs.existsSync(currentImage)) {
+              fs.unlinkSync(currentImage);
+            }
+            voucher.name = name;
+            voucher.category = category;
+            voucher.nominals = nominals;
+            voucher.thumbnail = fileName;
+
+            await voucher.save();
+
+            req.flash("alertMessage", "Berhasil ubah voucher");
+            req.flash("alertStatus", "success");
+
+            res.redirect("/voucher");
+          } catch (error) {
+            console.log(error);
+
+            req.flash("alertMessage", `${error.message}`);
+            req.flash("alertStatus", `danger`);
+
+            res.redirect(`/voucher/edit/${id}`);
+          }
+        });
+      } else {
+        const voucher = await Voucher.findOne({ _id: id });
+        voucher.name = name;
+        voucher.category = category;
+        voucher.nominals = nominals;
+
+        await voucher.save();
+
+        req.flash("alertMessage", "Berhasil ubah voucher");
+        req.flash("alertStatus", "success");
+
+        res.redirect("/voucher");
+      }
+    } catch (error) {
+      console.log(error);
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", `danger`);
+
+      res.redirect(`/nominal/edit/${id}`);
+    }
+  },
   //   actionDelete: async (req, res) => {
   //     try {
   //       const { id } = req.params;

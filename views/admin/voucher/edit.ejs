@@ -7,12 +7,12 @@
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Nominal</h1>
+          <h1>Voucher</h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item"><a href="/nominal">Nominal</a></li>
+            <li class="breadcrumb-item"><a href="/voucher">Voucher</a></li>
             <li class="breadcrumb-item active">Ubah</li>
           </ol>
         </div>
@@ -28,49 +28,77 @@
         <div class="col-12">
           <div class="card card-primary">
             <div class="card-header">
-              <h3 class="card-title">Form Edit "<%= nominal.coinName %>"</h3>
+              <h3 class="card-title">Form Ubah "<%= voucher.name %>"</h3>
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form action="/nominal/edit/<%= nominal._id %>?_method=PUT" method="POST">
+            <form
+              action="/voucher/edit/<%= voucher._id %>?_method=PUT"
+              method="POST"
+              enctype="multipart/form-data"
+            >
               <div class="card-body">
                 <div class="form-group">
-                  <label>Nama Koin</label>
+                  <label for="name">Nama Game</label>
+                  <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    id="name"
+                    placeholder="Masukkan nama game"
+                    value="<%= voucher.name %>"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Kategori</label>
                   <select
                     class="form-control select2"
                     style="width: 100%"
-                    name="coinName"
+                    name="category"
                     required
                   >
-                    <option>Pilih Koin</option>
-                    <option <%= nominal.coinName === 'Gold' ? 'selected' : '' %>  value="Gold">Gold</option>
-                    <option <%= nominal.coinName === 'Diamond' ? 'selected' : '' %> value="Diamond">Diamond</option>
-                    <option <%= nominal.coinName === 'Jewel' ? 'selected' : '' %> value="Jewel">Jewel</option>
+                    <option selected="selected">Pilih Kategori</option>
+                    <% categories.forEach((category) => { %>
+                    <option <%= category._id.toString() === voucher.category._id.toString() ? 'selected' : '' %>  value="<%= category._id %>">
+                      <%= category.name %>
+                    </option>
+                    <% }) %>
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="coinQuantity">Jumlah Koin</label>
-                  <input
-                    type="number"
-                    name="coinQuantity"
-                    class="form-control"
-                    id="coinQuantity"
-                    placeholder="Masukkan jumlah koin"
-                    value="<%= nominal.coinQuantity %>"
-                    required
-                  />
+                  <label>Nominal</label>
+                  <div class="select2-purple">
+                    <select
+                      class="form-control select2"
+                      style="width: 100%"
+                      data-placeholder="Pilih nominal"
+                      name="nominals"
+                      multiple="multiple"
+                      required
+                    >
+                      <% nominals.forEach((nominal) => { %>
+                      <option 
+                      <% voucher.nominals.forEach((voucherNominal) => { %>
+                        <%= nominal._id.toString() === voucherNominal._id.toString() ? 'selected' : '' %>
+                      <% }) %> 
+                      value="<%= nominal._id %>">
+                        <%= nominal.coinName %> (<%= nominal.coinQuantity %>)
+                      </option>
+                      <% }) %>
+                    </select>
+                  </div>
                 </div>
                 <div class="form-group">
-                  <label for="price">Harga</label>
+                  <label for="thumbnail">Gambar</label>
                   <input
-                    type="number"
-                    name="price"
+                    type="file"
+                    name="thumbnail"
                     class="form-control"
-                    id="price"
-                    placeholder="Masukkan harga"
-                    value="<%= nominal.price %>"
-                    required
+                    id="thumbnail"
+                    placeholder="Masukkan gambar"                    
                   />
+                  <img src="/uploads/<%= voucher.thumbnail %>" alt="preview" id="preview" />
                 </div>
               </div>
               <!-- /.card-body -->
@@ -92,3 +120,24 @@
 </div>
 
 <%- include ../../partials/footer.ejs %> <%- include ../../partials/js.ejs %>
+
+<script>
+  function readUrl(input) {
+    console.log("READ URL");
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        $("#preview").attr("src", e.target.result);
+        $("#preview").attr("width", "20%");
+        $("#preview").attr("height", "20%");
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  $("#thumbnail").change(function () {
+    readUrl(this);
+  });
+</script>
