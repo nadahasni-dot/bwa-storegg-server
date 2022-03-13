@@ -210,23 +210,28 @@ module.exports = {
       res.redirect(`/nominal/edit/${id}`);
     }
   },
-  //   actionDelete: async (req, res) => {
-  //     try {
-  //       const { id } = req.params;
+  actionDelete: async (req, res) => {
+    try {
+      const { id } = req.params;
 
-  //       await Nominal.deleteOne({ _id: id });
+      const voucher = await Voucher.findOneAndRemove({ _id: id });
 
-  //       req.flash("alertMessage", "Berhasil hapus data");
-  //       req.flash("alertStatus", "success");
+      let currentImage = `${config.rootPath}/public/uploads/${voucher.thumbnail}`;
+      if (fs.existsSync(currentImage)) {
+        fs.unlinkSync(currentImage);
+      }
 
-  //       res.redirect("/nominal");
-  //     } catch (error) {
-  //       console.log(error);
-  //       req.flash("alertMessage", `${error.message}`);
-  //       req.flash("alertStatus", `danger`);
+      req.flash("alertMessage", "Berhasil hapus data");
+      req.flash("alertStatus", "success");
 
-  //       console.log(error);
-  //       res.redirect("/nominal");
-  //     }
-  //   },
+      res.redirect("/voucher");
+    } catch (error) {
+      console.log(error);
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", `danger`);
+
+      console.log(error);
+      res.redirect("/voucher");
+    }
+  },
 };
