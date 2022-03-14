@@ -1,0 +1,65 @@
+<table id="example2" class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>Tipe Pembayaran</th>
+      <th>Bank</th>
+      <th>Status</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (let i = 0; i < payments.length; i++) { %>
+    <tr>
+      <td><%= i + 1 %></td>
+      <td><%= payments[i].type %></td>
+      <td>
+        <% payments[i].banks.forEach((bank) => { %>
+        <span class="badge badge-warning"
+          ><%= bank.nameBank %> <%= bank.name %>-<%= bank.noRekening %></span
+        >
+        <% })%>
+      </td>
+      <td>
+        <span
+          class="badge badge-<%= payments[i].status === 'Y' ? 'success' : 'danger' %>"
+          ><%= payments[i].status === 'Y' ? 'Aktif' : 'Tidak Aktif' %></span
+        >
+      </td>
+      <td>
+        <form
+          action="/payment/status/<%= payments[i]._id %>?_method=PUT"
+          style="display: inline-block"
+          method="POST"
+        >
+          <button class="btn btn-primary btn-sm">
+            <i class="fas fa-folder"></i>
+            <%= payments[i].status === 'Y' ? 'Matikan' : 'Hidupkan' %>
+          </button>
+        </form>
+        <a href="/payment/edit/<%= payments[i]._id %>" class="btn btn-info btn-sm"
+          ><i class="fas fa-pencil-alt"></i> Ubah</a
+        >
+        <form
+          action="/payment/delete/<%= payments[i]._id %>?_method=DELETE"
+          method="POST"
+          style="display: inline-block"
+        >
+          <button class="btn btn-danger btn-sm">
+            <i class="fas fa-trash"></i> Hapus
+          </button>
+        </form>
+      </td>
+    </tr>
+    <% } %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th>No.</th>
+      <th>Tipe Pembayaran</th>
+      <th>Bank</th>
+      <th>Status</th>
+      <th>Aksi</th>
+    </tr>
+  </tfoot>
+</table>
