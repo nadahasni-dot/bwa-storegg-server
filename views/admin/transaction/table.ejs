@@ -48,7 +48,7 @@
       <td><%= transactions[i].player.name ?? '-' %></td>
       <td>
         <form
-          action="/voucher/status/<%= transactions[i]._id %>?_method=PUT"
+          action="/transaction/status/<%= transactions[i]._id %>?status=failed&_method=PUT"
           method="POST"
           style="display: inline-block"
         >
@@ -57,7 +57,7 @@
           </button>
         </form>
         <form
-          action="/voucher/status/<%= transactions[i]._id %>?_method=PUT"
+          action="/transaction/status/<%= transactions[i]._id %>?status=success&_method=PUT"
           method="POST"
           style="display: inline-block"
         >

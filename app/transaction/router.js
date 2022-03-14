@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { index } = require("./controller");
+const { index, actionStatus } = require("./controller");
 
 const { isLoginAdmin } = require("../middleware/auth");
 
 router.use(isLoginAdmin);
 
 router.get("/", index);
+router.put("/status/:id", actionStatus);
 
 module.exports = router;
