@@ -7,9 +7,9 @@ module.exports = {
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
-      const bank = await Bank.find();
+      const banks = await Bank.find();
 
-      res.render("admin/bank/view_bank", { bank, alert });
+      res.render("admin/bank/view_bank", { banks, alert });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", `danger`);
@@ -53,65 +53,62 @@ module.exports = {
       res.redirect("/bank/create");
     }
   },
-  //   viewEdit: async (req, res) => {
-  //     try {
-  //       const { id } = req.params;
-  //       const nominal = await Nominal.findOne({ _id: id });
+  viewEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const bank = await Bank.findOne({ _id: id });
 
-  //       const alertMessage = req.flash("alertMessage");
-  //       const alertStatus = req.flash("alertStatus");
-  //       const alert = { message: alertMessage, status: alertStatus };
+      const alertMessage = req.flash("alertMessage");
+      const alertStatus = req.flash("alertStatus");
+      const alert = { message: alertMessage, status: alertStatus };
 
-  //       res.render("admin/nominal/edit", { nominal, alert });
-  //     } catch (error) {
-  //       console.log(error);
-  //       req.flash("alertMessage", `${error.message}`);
-  //       req.flash("alertStatus", `danger`);
+      res.render("admin/bank/edit", { bank, alert });
+    } catch (error) {
+      console.log(error);
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", `danger`);
 
-  //       console.log(error);
-  //       res.redirect("/nominal/edit");
-  //     }
-  //   },
-  //   actionEdit: async (req, res) => {
-  //     const { id } = req.params;
+      console.log(error);
+      res.redirect("/bank/edit");
+    }
+  },
+  actionEdit: async (req, res) => {
+    const { id } = req.params;
 
-  //     try {
-  //       const { coinName, coinQuantity, price } = req.body;
+    try {
+      const { name, nameBank, noRekening } = req.body;
 
-  //       await Nominal.findOneAndUpdate(
-  //         { _id: id },
-  //         { coinName, coinQuantity, price }
-  //       );
+      await Bank.findOneAndUpdate({ _id: id }, { name, nameBank, noRekening });
 
-  //       req.flash("alertMessage", "Berhasil update data");
-  //       req.flash("alertStatus", "success");
+      req.flash("alertMessage", "Berhasil update data");
+      req.flash("alertStatus", "success");
 
-  //       res.redirect("/nominal");
-  //     } catch (error) {
-  //       console.log(error);
-  //       req.flash("alertMessage", `${error.message}`);
-  //       req.flash("alertStatus", `danger`);
+      res.redirect("/bank");
+    } catch (error) {
+      console.log(error);
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", `danger`);
 
-  //       res.redirect(`/nominal/edit/${id}`);
-  //     }
-  //   },
-  //   actionDelete: async (req, res) => {
-  //     try {
-  //       const { id } = req.params;
+      res.redirect(`/bank/edit/${id}`);
+    }
+  },
+  actionDelete: async (req, res) => {
+    try {
+      const { id } = req.params;
 
-  //       await Nominal.deleteOne({ _id: id });
+      await Bank.deleteOne({ _id: id });
 
-  //       req.flash("alertMessage", "Berhasil hapus data");
-  //       req.flash("alertStatus", "success");
+      req.flash("alertMessage", "Berhasil hapus data");
+      req.flash("alertStatus", "success");
 
-  //       res.redirect("/nominal");
-  //     } catch (error) {
-  //       console.log(error);
-  //       req.flash("alertMessage", `${error.message}`);
-  //       req.flash("alertStatus", `danger`);
+      res.redirect("/bank");
+    } catch (error) {
+      console.log(error);
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", `danger`);
 
-  //       console.log(error);
-  //       res.redirect("/nominal");
-  //     }
-  //   },
+      console.log(error);
+      res.redirect("/bank");
+    }
+  },
 };
