@@ -3,13 +3,20 @@ const Nominal = require("./model");
 module.exports = {
   index: async (req, res) => {
     try {
+      const { name } = req.session.user;
+
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
       const nominal = await Nominal.find();
 
-      res.render("admin/nominal/view_nominal", { nominal, alert });
+      res.render("admin/nominal/view_nominal", {
+        nominal,
+        alert,
+        name,
+        title: "Nominal",
+      });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", `danger`);
@@ -20,11 +27,13 @@ module.exports = {
   },
   viewCreate: async (req, res) => {
     try {
+      const { name } = req.session.user;
+
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
-      res.render("admin/nominal/create", { alert });
+      res.render("admin/nominal/create", { alert, name, title: "Nominal" });
     } catch (error) {
       console.log(error);
       req.flash("alertMessage", `${error.message}`);
@@ -55,6 +64,8 @@ module.exports = {
   },
   viewEdit: async (req, res) => {
     try {
+      const { name } = req.session.user;
+
       const { id } = req.params;
       const nominal = await Nominal.findOne({ _id: id });
 
@@ -62,7 +73,12 @@ module.exports = {
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
-      res.render("admin/nominal/edit", { nominal, alert });
+      res.render("admin/nominal/edit", {
+        nominal,
+        alert,
+        name,
+        title: "Nominal",
+      });
     } catch (error) {
       console.log(error);
       req.flash("alertMessage", `${error.message}`);

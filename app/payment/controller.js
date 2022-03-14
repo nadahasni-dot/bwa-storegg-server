@@ -4,13 +4,20 @@ const Payment = require("./model");
 module.exports = {
   index: async (req, res) => {
     try {
+      const { name } = req.session.user;
+
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
       const payments = await Payment.find().populate("banks");
 
-      res.render("admin/payment/view_payment", { payments, alert });
+      res.render("admin/payment/view_payment", {
+        payments,
+        alert,
+        name,
+        title: "Jenis Pembayaran",
+      });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", `danger`);
@@ -21,13 +28,20 @@ module.exports = {
   },
   viewCreate: async (req, res) => {
     try {
+      const { name } = req.session.user;
+
       const alertStatus = req.flash("alertStatus");
       const alertMessage = req.flash("alertMessage");
       const alert = { message: alertMessage, status: alertStatus };
 
       const banks = await Bank.find();
 
-      res.render("admin/payment/create", { banks, alert });
+      res.render("admin/payment/create", {
+        banks,
+        alert,
+        name,
+        title: "Jenis Pembayaran",
+      });
     } catch (error) {
       console.log(error);
       req.flash("alertMessage", `${error.message}`);
@@ -58,6 +72,7 @@ module.exports = {
   },
   viewEdit: async (req, res) => {
     try {
+      const { name } = req.session.user;
       const { id } = req.params;
       const payment = await Payment.findOne({ _id: id });
       const banks = await Bank.find();
@@ -66,7 +81,13 @@ module.exports = {
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
-      res.render("admin/payment/edit", { payment, banks, alert });
+      res.render("admin/payment/edit", {
+        payment,
+        banks,
+        alert,
+        name,
+        title: "Jenis Pembayaran",
+      });
     } catch (error) {
       console.log(error);
       req.flash("alertMessage", `${error.message}`);

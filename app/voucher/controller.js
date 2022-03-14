@@ -9,6 +9,8 @@ const config = require("../../config");
 module.exports = {
   index: async (req, res) => {
     try {
+      const { name } = req.session.user;
+
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
@@ -17,7 +19,12 @@ module.exports = {
         .populate("category")
         .populate("nominals");
 
-      res.render("admin/voucher/view_voucher", { vouchers, alert });
+      res.render("admin/voucher/view_voucher", {
+        vouchers,
+        alert,
+        name,
+        title: "Voucher",
+      });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", `danger`);
@@ -28,6 +35,8 @@ module.exports = {
   },
   viewCreate: async (req, res) => {
     try {
+      const { name } = req.session.user;
+
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
@@ -35,7 +44,13 @@ module.exports = {
       const categories = await Category.find();
       const nominals = await Nominal.find();
 
-      res.render("admin/voucher/create", { alert, categories, nominals });
+      res.render("admin/voucher/create", {
+        alert,
+        categories,
+        nominals,
+        name,
+        title: "Voucher",
+      });
     } catch (error) {
       console.log(error);
       req.flash("alertMessage", `${error.message}`);
@@ -113,6 +128,7 @@ module.exports = {
   },
   viewEdit: async (req, res) => {
     try {
+      const { name } = req.session.user;
       const { id } = req.params;
 
       const categories = await Category.find();
@@ -130,6 +146,8 @@ module.exports = {
         categories,
         nominals,
         alert,
+        name,
+        title: "Voucher",
       });
     } catch (error) {
       console.log(error);

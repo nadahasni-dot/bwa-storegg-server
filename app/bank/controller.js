@@ -3,13 +3,15 @@ const Bank = require("./model");
 module.exports = {
   index: async (req, res) => {
     try {
+      const { name } = req.session.user;
+
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
       const banks = await Bank.find();
 
-      res.render("admin/bank/view_bank", { banks, alert });
+      res.render("admin/bank/view_bank", { banks, alert, name, title: "Bank" });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", `danger`);
@@ -20,11 +22,13 @@ module.exports = {
   },
   viewCreate: async (req, res) => {
     try {
+      const { name } = req.session.user;
+
       const alertStatus = req.flash("alertStatus");
       const alertMessage = req.flash("alertMessage");
       const alert = { message: alertMessage, status: alertStatus };
 
-      res.render("admin/bank/create", { alert });
+      res.render("admin/bank/create", { alert, name, title: "Bank" });
     } catch (error) {
       console.log(error);
       req.flash("alertMessage", `${error.message}`);
@@ -55,6 +59,7 @@ module.exports = {
   },
   viewEdit: async (req, res) => {
     try {
+      const { name } = req.session.user;
       const { id } = req.params;
       const bank = await Bank.findOne({ _id: id });
 
@@ -62,7 +67,7 @@ module.exports = {
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
-      res.render("admin/bank/edit", { bank, alert });
+      res.render("admin/bank/edit", { bank, alert, name, title: "Bank" });
     } catch (error) {
       console.log(error);
       req.flash("alertMessage", `${error.message}`);
