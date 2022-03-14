@@ -40,8 +40,8 @@ module.exports = {
   },
   actionCreate: async (req, res) => {
     try {
-      const { name, nameBank, noRekening } = req.body;
-      const bank = Bank({ name, nameBank, noRekening });
+      const { name, bankName, noRekening } = req.body;
+      const bank = Bank({ name, bankName, noRekening });
       await bank.save();
 
       req.flash("alertMessage", "Berhasil tambah bank");
@@ -81,9 +81,9 @@ module.exports = {
     const { id } = req.params;
 
     try {
-      const { name, nameBank, noRekening } = req.body;
+      const { name, bankName, noRekening } = req.body;
 
-      await Bank.findOneAndUpdate({ _id: id }, { name, nameBank, noRekening });
+      await Bank.findOneAndUpdate({ _id: id }, { name, bankName, noRekening });
 
       req.flash("alertMessage", "Berhasil update data");
       req.flash("alertStatus", "success");

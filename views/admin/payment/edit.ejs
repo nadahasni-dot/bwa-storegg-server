@@ -60,7 +60,7 @@
                       <% banks.forEach((bank) => { %>
                         <% payment.banks.forEach((paymentBank) => { %> 
                           <option <%= paymentBank._id.toString() === bank._id.toString() ? 'selected' : '' %> value="<%= bank._id %>">
-                            <%= bank.name %> <%= bank.nameBank %>-<%=
+                            <%= bank.name %> <%= bank.bankName %>-<%=
                             bank.noRekening %>
                           </option>
                         <% }) %> 
