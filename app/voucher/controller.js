@@ -1,6 +1,7 @@
 const Voucher = require("./model");
 const Category = require("../category/model");
 const Nominal = require("../nominal/model");
+const User = require("../user/model");
 
 const path = require("path");
 const fs = require("fs");
@@ -82,11 +83,13 @@ module.exports = {
         src.pipe(dest);
         src.on("end", async () => {
           try {
+            const user = await User.findOne({ _id: req.session.user.id });
             const voucher = new Voucher({
               name,
               category,
               nominals,
               thumbnail: fileName,
+              user,
             });
 
             await voucher.save();
