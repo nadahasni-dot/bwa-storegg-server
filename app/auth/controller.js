@@ -2,6 +2,8 @@ const Player = require("../player/model");
 const path = require("path");
 const fs = require("fs");
 const config = require("../../config");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 module.exports = {
   signup: async (req, res, next) => {
@@ -57,6 +59,55 @@ module.exports = {
     } catch (error) {
       if (error && error.name === "ValidationError") {
         return res.status(422).json({
+          error: 1,
+          message: error.message || "Internal server error",
+          fields: error.errors,
+        });
+      }
+
+      next(error);
+    }
+  },
+  signin: async (req, res, next) => {
+    const { email, password } = req.body;
+
+    try {
+      const player = await Player.findOne({ email: email });
+
+      if (player) {
+        const checkPassword = bcrypt.compareSync(password, player.password);
+
+        if (checkPassword) {
+          const token = jwt.sign(
+            {
+              player: {
+                id: player._id,
+                username: player.username,
+                email: player.email,
+                nama: player.nama,
+                phoneNumber: player.phoneNumber,
+                avatar: player.avatar,
+              },
+            },
+            config.jwtKey
+          );
+
+          return res
+            .status(200)
+            .json({ status: true, message: "success", data: { token } });
+        } else {
+          return res
+            .status(403)
+            .json({ status: false, message: "Password salah" });
+        }
+      } else {
+        return res
+          .status(403)
+          .json({ status: false, message: "Email tidak terdaftar" });
+      }
+    } catch (error) {
+      if (error && error.name === "ValidationError") {
+        return res.status(500).json({
           error: 1,
           message: error.message || "Internal server error",
           fields: error.errors,
