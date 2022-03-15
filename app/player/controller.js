@@ -8,7 +8,28 @@ module.exports = {
         .select("_id name status category thumbnail")
         .populate("category");
 
-      res.status(200).json({ status: true, data: voucher });
+      res.status(200).json({ status: true, message: "success", data: voucher });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: error.message || "Internal server error" });
+    }
+  },
+  detailPage: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const voucher = await Voucher.findOne({ _id: id })
+        .populate("category")
+        .populate("nominals")
+        .populate("user", "_id name phoneNumber");
+
+      if (!voucher) {
+        return res
+          .status(404)
+          .json({ status: false, message: "Voucher game tidak ditemukan" });
+      }
+
+      res.status(200).json({ status: true, message: "success", data: voucher });
     } catch (error) {
       res
         .status(500)
