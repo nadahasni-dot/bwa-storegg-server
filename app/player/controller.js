@@ -38,7 +38,16 @@ module.exports = {
           .json({ status: false, message: "Voucher game tidak ditemukan" });
       }
 
-      res.status(200).json({ status: true, message: "success", data: voucher });
+      const payments = await Payment.find().populate("banks");
+
+      res.status(200).json({
+        status: true,
+        message: "success",
+        data: {
+          detail: voucher,
+          payments: payments,
+        },
+      });
     } catch (error) {
       res
         .status(500)
